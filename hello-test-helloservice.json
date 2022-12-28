@@ -48,7 +48,7 @@
             "memoryReservation": null,
             "volumesFrom": [],
             "stopTimeout": null,
-            "image": "springio/gs-spring-boot-docker",
+            "image": "helloservice/helloservice-docker",
             "startTimeout": null,
             "firelensConfiguration": null,
             "dependsOn": null,
