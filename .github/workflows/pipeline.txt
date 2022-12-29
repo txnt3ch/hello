@@ -1,0 +1,23 @@
+
+
+
+#k8s
+#https://docs.aws.amazon.com/eks/latest/userguide/getting-started-eksctl.html
+#Create cluster
+eksctl create cluster --name hello-cluster --region ap-southeast-1
+#Deploy app
+kubectl create namespace eks-hello-app
+#Apply deployment manifest
+kubectl apply -f ./aws/eks-hello-deployment.yaml
+#Apply service manifest
+kubectl apply -f ./aws/eks-hello-service.yaml
+#Run shell on a pod - to replace with pod ID. Then curl the localhost:8080/greeting
+kubectl exec -it eks-hello-linux-deployment-6dd7c787bb-95mz7 -n eks-hello-app -- /bin/bash
+#Check from the bash
+curl eks-hello-linux-service
+
+
+#delete namespace
+kubectl delete namespace eks-hello-app
+#delete cluster
+eksctl delete cluster --name hello-cluster --region ap-southeast-1

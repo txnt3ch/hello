@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: eks-hello-linux-deployment
+  namespace: eks-hello-app
+  labels:
+    app: eks-hello-linux-app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: eks-hello-linux-app
+  template:
+    metadata:
+      labels:
+        app: eks-hello-linux-app
+    spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: kubernetes.io/arch
+                    operator: In
+                    values:
+                      - amd64
+                      - arm64
+      containers:
+        - name: nginx
+          image: 588184019567.dkr.ecr.ap-southeast-1.amazonaws.com/hello/helloservice:af2d73d0eb3e5ca8bed24e0fd9fe8069c74409af
+          ports:
+            - name: http
+              containerPort: 80
+          imagePullPolicy: IfNotPresent
+      nodeSelector:
+        kubernetes.io/os: linux
