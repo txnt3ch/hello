@@ -1,4 +1,7 @@
-
+#Switch ssh:
+ssh-add -D
+ssh-add finx
+ssh-add txntech
 
 
 #k8s
