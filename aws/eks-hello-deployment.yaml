@@ -27,7 +27,7 @@ spec:
                       - arm64
       containers:
         - name: nginx
-          image: 588184019567.dkr.ecr.ap-southeast-1.amazonaws.com/hello/helloservice:af2d73d0eb3e5ca8bed24e0fd9fe8069c74409af
+          image: 588184019567.dkr.ecr.ap-southeast-1.amazonaws.com/hello/helloservice:latest
           ports:
             - name: http
               containerPort: 80
