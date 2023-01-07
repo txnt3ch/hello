@@ -44,5 +44,19 @@ jobs:
           ref: main
 
       - name: Display version
+        id: image-ver
         run: |
-          cat apps/image-version
+          echo "version=$(cat apps/image-version)" >> $GITHUB_OUTPUT
+          
+
+      - name: Replace version
+        env:
+          IMG-VER: ${{ steps.image-ver.outputs.version }}
+        run: |
+          sed -i 's/$VER/abc/g' apps/image-version
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add .
+          git commit -m "generated"
+          git push
+  
