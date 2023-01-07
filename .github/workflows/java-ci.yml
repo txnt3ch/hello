@@ -1,0 +1,40 @@
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+
+# GitHub recommends pinning actions to a commit SHA.
+# To get a newer version, you will need to update the SHA.
+# You can also reference a tag or branch, but the action may change without warning.
+
+name: Test place
+
+on: workflow_dispatch
+
+env:
+  AWS_REGION: ap-southeast-1                   # set this to your preferred AWS region, e.g. us-west-1
+  ECR_REPOSITORY: hello/helloservice           # set this to your Amazon ECR repository name
+  ECS_SERVICE: hello-test-helloservice-Service-9TYUSCcCvEiz                 # set this to your Amazon ECS service name
+  ECS_CLUSTER: hello-test-Cluster-TZ6kXSnMfk9j                 # set this to your Amazon ECS cluster name
+  ECS_TASK_DEFINITION: hello-test-helloservice.json # set this to the path to your Amazon ECS task definition
+  # file, e.g. .aws/task-definition.json
+  CONTAINER_NAME: helloservice           # set this to the name of the container in the
+  # containerDefinitions section of your task definition
+
+jobs:
+
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    environment: production
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Display
+        run: |
+          cat gradlew
+
+
+
