@@ -27,7 +27,7 @@ spec:
                       - arm64
       containers:
         - name: hello-container
-          image: 588184019567.dkr.ecr.ap-southeast-1.amazonaws.com/hello/helloservice:latest
+          image: 588184019567.dkr.ecr.ap-southeast-1.amazonaws.com/hello/helloservice:23f46fe015f662f792add5226871fc149f4f6ec1
           ports:
             - name: http
               containerPort: 80
