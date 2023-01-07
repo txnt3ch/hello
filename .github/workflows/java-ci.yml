@@ -10,7 +10,7 @@
 name: Test place
 
 on: workflow_dispatch
-permissions: read-all|write-all
+permissions: write-all
 env:
   AWS_REGION: ap-southeast-1                   # set this to your preferred AWS region, e.g. us-west-1
   ECR_REPOSITORY: hello/helloservice           # set this to your Amazon ECR repository name
