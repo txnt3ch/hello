@@ -39,7 +39,7 @@ jobs:
       - name: CheckVer
         uses: actions/checkout@v3
         with:
-          repository: argocd-apps
+          repository: txnt3ch/argocd-apps
 
       - name: Display version
         run: |
