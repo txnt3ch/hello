@@ -34,8 +34,6 @@ jobs:
         with:
           fetch-depth: 0
           ref: main
-        run: |
-          cat src/main/java/com/txn/helloservice/GreetingController.java 
 
       - name: Set up JDK 11
         uses: actions/setup-java@v3
@@ -77,3 +75,4 @@ jobs:
           docker build --pull --no-cache -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
+          cat src/main/java/com/txn/helloservice/GreetingController.java
