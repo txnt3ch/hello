@@ -52,6 +52,9 @@ jobs:
       - name: Replace version
         env:
           IMG-VER: ${{ steps.image-ver.outputs.version }}
+
+        with:
+          token: ${{ secrets.GH_TOKEN }}
         run: |
           sed -i.bak "s|${IMG-VER}|abc|g" apps/image-version
           git config user.name github-actions
