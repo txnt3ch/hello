@@ -10,7 +10,7 @@
 name: Test place
 
 on: workflow_dispatch
-
+permissions: read-all|write-all
 env:
   AWS_REGION: ap-southeast-1                   # set this to your preferred AWS region, e.g. us-west-1
   ECR_REPOSITORY: hello/helloservice           # set this to your Amazon ECR repository name
@@ -52,9 +52,6 @@ jobs:
       - name: Replace version
         env:
           IMG-VER: ${{ steps.image-ver.outputs.version }}
-
-        with:
-          token: ${{ secrets.GH_TOKEN }}
         run: |
           sed -i.bak "s|${IMG-VER}|abc|g" apps/image-version
           git config user.name github-actions
