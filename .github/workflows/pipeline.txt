@@ -3,62 +3,74 @@ ssh-add -D
 ssh-add finx
 ssh-add txntech
 
-
-#k8s
-#https://docs.aws.amazon.com/eks/latest/userguide/getting-started-eksctl.html
-#Create cluster
-eksctl create cluster --name hello-cluster --region ap-southeast-1 --instance-types <instance type>
-
-#Deploy app
-kubectl create namespace eks-hello-app
-
-#Apply deployment manifest
-kubectl apply -f ./aws/eks-hello-deployment.yaml
-#Apply service manifest
-kubectl apply -f ./aws/eks-hello-service.yaml
-#Run shell on a pod - to replace with pod ID. Then curl the localhost:8080/greeting
-kubectl exec -it eks-hello2-linux-deployment-84f4d4ff84-mr4nl -n eks-hello-app -- /bin/bash
-#Check from the bash
-curl eks-hello-linux-service
-
-
-#delete namespace
+#===== STEP FINAL: Clean up
+#Delete namespace
 kubectl delete namespace eks-hello-app
-#delete cluster
+
+#Delete cluster
 eksctl delete cluster --name hello-cluster --region ap-southeast-1
 
 
 
-#install argocd
-#reset password https://github.com/argoproj/argo-cd/blob/master/docs/faq.md
-kubectl delete namespace argocd
+#===== Create cluster
+eksctl create cluster --name hello-cluster --region ap-southeast-1 --instance-types <instance type>
+
+
+#===== Create application namespace
+kubectl create namespace eks-hello-app
+
+#===== Apply deployment & service manifest, or check the argocd/apps repo
+kubectl apply -f ./aws/eks-hello-deployment.yaml
+kubectl apply -f ./aws/eks-hello-service.yaml
+#Run shell on a pod - to replace with pod ID. Then curl the localhost:8080/greeting
+kubectl exec -it <pod ID> -n eks-hello-app -- /bin/bash
+
+
+
+
+
+#===== Install Argocd
 kubectl create namespace argocd
 kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+
+#Change type to LoadBalancer
 kubectl patch svc argocd-server -n argocd -p '{"spec": {"type": "LoadBalancer"}}'
 export ARGOCD_SERVER=`kubectl get svc argocd-server -n argocd -o json | jq --raw-output '.status.loadBalancer.ingress[0].hostname'`
 
-#login
+#Show the default password
 kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d; echo;
-#example password: YFlrEwkujVU31jM4
 
-argocd login $ARGOCD_SERVER --username admin --password <password here> --insecure
-
-
-//NEED TO LOGIN FIRST
+#Login to Argocd
 argocd login $ARGOCD_SERVER --username admin --password <password here> --insecure
 CONTEXT_NAME=`kubectl config view -o jsonpath='{.current-context}'`
 argocd cluster add $CONTEXT_NAME
+
+#Create the application - option 1
 argocd app create eks-hello-linux-app --repo https://github.com/txnt3ch/argocd-apps.git --path apps --dest-server https://1589A63B8955A6C6607187244561A0FE.gr7.ap-southeast-1.eks.amazonaws.com --dest-namespace eks-hello-app
-argocd app get eks-hello-linux-app
-argocd app sync eks-hello-linux-app
-argocd app set eks-hello-linux-app --sync-policy automated
 
-//IMAGE UPDATER
-//install
-kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj-labs/argocd-image-updater/stable/manifests/install.yaml
-
+#Create the application - option 2
+#Create secret use in application.yaml
 kubectl --namespace argocd create secret generic git-creds --from-literal=username=txnt3ch --from-literal=password=xxx
 kubectl apply -f ../argocd-apps/application.yaml
 
+#Apply auto sync
+argocd app set eks-hello-linux-app --sync-policy automated
+
+#Or check the status and sync manually
+argocd app get eks-hello-linux-app
+argocd app sync eks-hello-linux-app
+
+
+#===== Install Argocd Image Updater
+
+kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj-labs/argocd-image-updater/stable/manifests/install.yaml
+
+
+#Read log
 kubectl --namespace argocd logs --selector app.kubernetes.io/name=argocd-image-updater --follow
+
+#Check if the app is running
 curl http://aaa8027ad80d74893b0fd4bcb7fa4d43-41055664.ap-southeast-1.elb.amazonaws.com:8080/greeting
+
+
+
